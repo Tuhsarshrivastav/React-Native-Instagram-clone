@@ -1,8 +1,16 @@
-import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import HomeScreen from "./screens/HomeScreen";
-
+import React, { useEffect, useState } from "react";
+import { Text } from "react-native";
+import AuthNavigation from "./AuthNavigation";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "./firebaseConfig";
+const auth = getAuth();
 export default function App() {
-  return <HomeScreen />;
+  const [currentUser, setCurrentUser] = useState(null);
+  const userHandler = (user) =>  user ? setCurrentUser(user) : setCurrentUser(null)
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      userHandler(user);
+    });
+  }, []);
+  return <AuthNavigation currentUser={currentUser} />;
 }
